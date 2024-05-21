@@ -1,0 +1,17 @@
+@import "./base.css";
+
+body {
+  background-color: #007aff;
+}
+
+h1 {
+  font-size: 74px;
+  line-height: 74px;
+  /* font-family: "Tahoma"; */
+  font-weight: 400;
+  color: #ffffff;
+}
+
+h4 {
+    color: #ffffff
+}
