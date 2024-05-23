@@ -6,6 +6,8 @@ import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ContentContainer from "../components/ContentContainer.vue";
 import HeaderContainer from "../components/HeaderContainer.vue";
+import ModalPhoto from "../components/ModalPhoto.vue";
+
 const route = useRoute();
 const albumId = route.params.id;
 const isLoaded = ref(false);
@@ -19,17 +21,26 @@ onMounted(() => {
   axios.get("/api/albums/" + albumId + "/favorites").then((res) => {
     isLoaded.value = true;
     photos.value = res.data.mediaItems;
-    console.log('photos', photos.value)
+    console.log("photos", photos.value);
   });
 });
 
 function openModal(photo) {
   modalPhoto.value = photo;
   showModal.value = true;
+  document.addEventListener("keydown", closeModalEsc);
 }
-function closeModal(photo) {
+function closeModal() {
   modalPhoto.value = null;
   showModal.value = false;
+  document.removeEventListener("keydown", closeModalEsc);
+}
+
+function closeModalEsc(event) {
+  // Close modal if Esc key is pressed
+  if (event.key === "Escape") {
+    closeModal();
+  }
 }
 </script>
 
@@ -40,14 +51,8 @@ function closeModal(photo) {
       :subtitle="`Your Favorite Photos`"
     ></HeaderContainer>
     <ContentContainer>
-      <div v-if="showModal" class="modal-backdrop">
-        <div class="modal">
-          <button type="button" class="btn-close" @click="closeModal">
-            <span class="icon-cross"></span>
-            <span class="visually-hidden">Close</span>
-          </button>
-          <img :src="modalPhoto.baseUrl" class="modal-content" />
-        </div>
+      <div v-if="showModal" class="modal-backdrop" @click.self="closeModal">
+        <ModalPhoto @close="closeModal" :photo="modalPhoto" @keydown.esc="closeModalEsc"/>
       </div>
       <div class="photo-grid">
         <ul>
@@ -131,109 +136,6 @@ function closeModal(photo) {
   display: flex;
   justify-content: center;
   align-items: center;
-  // z-index: 9999; /* Ensure the modal is on top */
-}
-
-@keyframes swirl {
-  0% {
-    transform: rotateY(270deg);
-  }
-  100% {
-    transform: rotateY(360deg);
-  }
-}
-
-.modal {
-  background-color: #fff;
-  overflow: auto;
-  position: relative;
-  animation: swirl 0.2s ease-out; /* Add the animation */;
-
-}
-
-.modal-content {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-
-// Display a cross with CSS only.
-//
-// $size  : px or em
-// $color : color
-// $thickness : px
-@mixin cross($size: 20px, $color: currentColor, $thickness: 1px) {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  position: relative;
-  width: $size;
-  height: $size;
-
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    top: ($size - $thickness) / 2;
-    left: 0;
-    right: 0;
-    height: $thickness;
-    background: $color;
-    border-radius: $thickness;
-  }
-
-  &:before {
-    transform: rotate(45deg);
-  }
-
-  &:after {
-    transform: rotate(-45deg);
-  }
-
-  span {
-    display: block;
-  }
-}
-
-// Example 1.
-.btn-close {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  margin: 0;
-  border: 0;
-  padding: 0;
-  background: hsl(216, 100, 50);
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 150ms;
-
-  .icon-cross {
-    @include cross(12px, #fff, 3px);
-  }
-
-  &:hover,
-  &:focus {
-    transform: rotateZ(90deg);
-    background: hsl(216, 100, 40);
-  }
-}
-
-// For screen readers.
-.visually-hidden {
-  position: absolute !important;
-  clip: rect(1px, 1px, 1px, 1px);
-  padding: 0 !important;
-  border: 0 !important;
-  height: 1px !important;
-  width: 1px !important;
-  overflow: hidden;
+  /* z-index: 9999; /* Ensure the modal is on top */
 }
 </style>
