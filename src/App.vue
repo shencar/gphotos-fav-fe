@@ -27,7 +27,7 @@ const callback = (response) => {
 
 <style scoped>
 .container {
-  max-width: 1000px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 

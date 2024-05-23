@@ -5,97 +5,97 @@ import { useStorage } from "@vueuse/core";
 import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ContentContainer from "../components/ContentContainer.vue";
-import Header from "../components/Header.vue";
+import HeaderContainer from "../components/HeaderContainer.vue";
 
 const route = useRoute();
 const albumId = route.params.id;
 const isLoaded = ref(false);
-const photos2D = ref([]);
-
-function create2DArray(list, numRows, numCols) {
-  let result = [];
-  let index = 0;
-  for (let i = 0; i < numRows; i++) {
-    let row = [];
-    for (let j = 0; j < numCols; j++) {
-      if (index < list.length) {
-        row.push(list[index]);
-        index++;
-      } else {
-        row.push(null); // or any default value you prefer
-      }
-    }
-    result.push(row);
-  }
-  return result;
-}
+const photos = ref([]);
+const albums = useStorage("albums", []);
+const albumMeta = albums.value.find((album) => album.id === albumId);
 
 onMounted(() => {
   axios.get("/api/albums/" + albumId + "/favorites").then((res) => {
     isLoaded.value = true;
-    photos2D.value = create2DArray(
-      res.data.mediaItems,
-      4,
-      1 + res.data.mediaItems.length / 10
-    );
+    photos.value = res.data.mediaItems;
   });
 });
 
-const albums = useStorage("albums", []);
-const albumMeta = albums.value.find((album) => album.id === albumId);
 </script>
 
 <template>
   <div v-if="isLoaded">
-    <Header
+    <HeaderContainer
       :title="albumMeta.title"
       :subtitle="`Your Favorite Photos`"
-    ></Header>
+    ></HeaderContainer>
     <ContentContainer>
-      <div class="row">
-        <div class="column" v-for="col in photos2D">
-          <img v-for="photo in col" :src="photo?.baseUrl" />
-        </div>
-      </div>
+      <ul>
+        <li v-for="photo in photos">
+          <img :src="photo?.baseUrl" />
+        </li>
+      </ul>
     </ContentContainer>
   </div>
 
   <LoadingSpinner v-else>Loading</LoadingSpinner>
 </template>
 
-<style scoped>
-.row {
+<style scoped lang="scss">
+ul {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 4px;
+  list-style: none;
+  padding: 50px;
 }
 
-/* Create four equal columns that sits next to each other */
-.column {
-  flex: 25%;
-  max-width: 25%;
-  padding: 0 4px;
+li {
+  height: 40vh;
+  flex-grow: 1;
+  padding: 5px;
 }
 
-.column img {
-  margin-top: 8px;
-  vertical-align: middle;
-  width: 100%;
+li:last-child {
+  flex-grow: 10;
 }
 
-/* Responsive layout - makes a two column-layout instead of four columns */
-@media screen and (max-width: 800px) {
-  .column {
-    flex: 50%;
-    max-width: 50%;
+img {
+  max-height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  vertical-align: center;
+  border-radius: 4%;
+  transition: border-color 0.3s; /* Adding transition for smooth effect */
+}
+img:hover {
+  border: 2px solid; /* Adding yellow border on hover */
+}
+
+@media (max-aspect-ratio: 1/1) {
+  li {
+    height: 30vh;
   }
 }
 
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .column {
-    flex: 100%;
-    max-width: 100%;
+@media (max-height: 480px) {
+  li {
+    height: 80vh;
+  }
+}
+
+@media (max-aspect-ratio: 1/1) and (max-width: 480px) {
+  ul {
+    flex-direction: row;
+  }
+
+  li {
+    height: auto;
+    width: 100%;
+  }
+  img {
+    width: 100%;
+    max-height: 75vh;
+    min-width: 0;
   }
 }
 </style>

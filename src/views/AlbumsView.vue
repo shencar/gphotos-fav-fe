@@ -4,7 +4,7 @@ import LoadingSpinner from "../components/LoadingSpinner.vue";
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useStorage } from "@vueuse/core";
-import Header from "../components/Header.vue";
+import HeaderContainer from "../components/HeaderContainer.vue";
 import ContentContainer from "../components/ContentContainer.vue";
 
 const searchInput = ref("");
@@ -30,13 +30,13 @@ onMounted(() => {
 </script>
 <template>
   <div v-if="isLoaded">
-    <Header
+    <HeaderContainer
       v-if="isLoaded"
       title="Your Albums"
       :subtitle="`You have ${albumCount} Albums`"
     >
       <input type="text" placeholder="Search..." v-model.trim="searchInput" />
-    </Header>
+    </HeaderContainer>
     <ContentContainer v-if="isLoaded">
       <PhotoCube
         v-for="album in visibleAlbums"

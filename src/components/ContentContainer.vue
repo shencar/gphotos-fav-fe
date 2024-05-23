@@ -9,7 +9,7 @@
   flex-wrap: wrap;
   margin-top: 40px;
   justify-content: space-between;
-  background-color: #8a2be2;
+  background-color: #8bb5f4;
   border-radius: 30px;
   padding: 20px;
   align-items: center;

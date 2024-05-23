@@ -25,23 +25,29 @@ console.log("includeText", includeText);
   height: 300px;
   width: 300px;
   overflow: hidden;
+  position: hidden;
   border-radius: 7%;
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 35px;
-  margin-right: 20px;
-  margin-left: 20px;
+  /* margin-bottom: 35px; */
+  /* margin-right: 20px; */
+  /* margin-left: 20px; */
   cursor: pointer;
-  flex: 0 0 20%;
-  background-color: #F5E663;
-  /* background-color: #A9FFCB; */
+  /* flex: 0 0 20%; */
+  background-color: white;
+  transition: background-color 0.3s;
+}
+
+.photo-cube-container:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s;
+  background-color: #FFE45E;
 }
 
 .photo-cube-container img {
+  width: 100%;
+  height: 70%;
   object-fit: cover;
-  width: fit-content;
-  max-height: 170px;
-  display: block;
-  margin: 0 auto 10px; /* Center image */
+  object-position: center;
 }
 
 .photo-cube-container .photo-cube-text {
